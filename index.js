@@ -75,7 +75,14 @@ let lang = {
     "energized_dark_ingot": "Energized Dark Ingot",
     "grains_of_infinity": "Grains of Infinity",
     "industrial_dye_blend": "Industrial Dye Blend",
-    "dark_steel": "Dark Steel"
+    "dark_steel": "Dark Steel",
+    "end_steel": "End Steel",
+    "pulsating_crystal": "Pulsating Crystal",
+    "nether_quartz": "Nether Quartz",
+    "organic_black_dye": "Organic Black Dye",
+    "melodic_alloy": "Melodic Alloy",
+    "diamond": "Diamond",
+    "emerald": "Emerald"
 }
 
 function getLang(id){
@@ -107,6 +114,24 @@ let recipes = {
         new Item("simple_machine_chassis"),
         new Item("industrial_dye_blend", 4),
         new Item("dark_steel", 4)
+    ],
+    "end_steel_machine_chassis": [
+        new Item("industrial_machine_chassis"),
+        new Item("end_steel", 6)
+    ],
+    "pulsating_crystal": [
+        new Item("pulsating_iron", 8),
+        new Item("diamond")
+    ],
+    "enhanced_dye_blend": [
+        new Item("pulsating_crystal", 2),
+        new Item("nether_quartz", 2),
+        new Item("organic_black_dye", 0.5)
+    ],
+    "enhanced_machine_chassis": [
+        new Item("end_steel_machine_chassis"),
+        new Item("enhanced_dye_blend", 4),
+        new Item("melodic_alloy", 4)
     ]
 }
 
@@ -160,7 +185,7 @@ function main(){
 
     let ingredientsList = document.getElementById("ingredients");
 
-    let casingsType = "industrial_machine_chassis";
+    let casingsType = "enhanced_machine_chassis";
     
     let ingredientsForCasing = new ItemList();
 
