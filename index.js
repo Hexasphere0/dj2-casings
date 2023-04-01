@@ -1,7 +1,8 @@
 class Item {
-    constructor(name, amount = 1){
+    constructor(name, amount = 1, priority = -1){
         this.name = name;
         this.amount = amount;
+        this.priority = priority;
     }
 }
 
@@ -117,7 +118,7 @@ let recipes = {
     ],
     "end_steel_machine_chassis": [
         new Item("industrial_machine_chassis"),
-        new Item("end_steel", 6)
+        new Item("end_steel", 5.5)
     ],
     "pulsating_crystal": [
         new Item("pulsating_iron", 8),
@@ -139,18 +140,18 @@ function makeIngredient(itemName, itemCount){
     itemName = getLang(itemName)
 
     let holder = document.createElement("li");
-    holder.className = "list-group-item d-flex justify-content-between lh-sm";
+    holder.className = "list-group-item d-flex lh-sm";
 
     let name = document.createElement("h6");
-    name.className = "my-0 pe-5";
+    name.className = "my-0 pe-5 me-auto";
     name.innerHTML = "&nbsp;&nbsp;&nbsp;" + itemName;
 
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
 
     let count = document.createElement("span");
-    count.className = "text-body-secondary";
-    count.innerHTML = itemCount;
+    count.className = "text-body-secondary text-end";
+    count.innerHTML = Math.round(itemCount);
 
     holder.appendChild(checkbox);
     holder.appendChild(name);
@@ -165,10 +166,9 @@ function getIngredients(ingredient){
         let ingredients = new ItemList();
 
         for(let i = 0; i < subIngredients.length; i++){
-            console.log(subIngredients[i].name)
             ingredients.extend(getIngredients(subIngredients[i]));
         }
-
+        
         return ingredients;
     }
 
@@ -180,26 +180,35 @@ function getIngredients(ingredient){
     }
 }
 
+let casingsType = "steel_casing";
+let casingsCount = 1;
+const ingredientsList = document.getElementById("ingredients");
+const currentRecipe = document.getElementById("recipe.type");
+const currentRecipeCount = document.getElementById("recipe.count")
+
+function dropdown(){
+    casingsType = currentRecipe.value;
+    casingsCount = currentRecipeCount.value;
+
+    ingredientsList.innerHTML = ""
+
+    generateRecipes();
+}
+
 function main(){
-    console.log("Loading javascript");
+    generateRecipes()
+}
 
-    let ingredientsList = document.getElementById("ingredients");
-
-    let casingsType = "enhanced_machine_chassis";
-    
+function generateRecipes(){
     let ingredientsForCasing = new ItemList();
 
-    for(let i = 0; i < 15; i++){
+    for(let i = 0; i < casingsCount; i++){
         ingredientsForCasing.extend(getIngredients(new Item(casingsType)));
     }
-
-    console.log(ingredientsForCasing)
 
     for (const [key, value] of Object.entries(ingredientsForCasing.items)){
         let newIngredient = makeIngredient(key, value);
         ingredientsList.appendChild(newIngredient);
     }
 
-
-    console.log("Finished loading javascript");
 }
