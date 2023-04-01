@@ -118,12 +118,16 @@ function makeIngredient(itemName, itemCount){
 
     let name = document.createElement("h6");
     name.className = "my-0 pe-5";
-    name.innerHTML = itemName;
+    name.innerHTML = "&nbsp;&nbsp;&nbsp;" + itemName;
+
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
 
     let count = document.createElement("span");
     count.className = "text-body-secondary";
     count.innerHTML = itemCount;
 
+    holder.appendChild(checkbox);
     holder.appendChild(name);
     holder.appendChild(count);
 
