@@ -82,8 +82,17 @@ let lang = {
     "nether_quartz": "Nether Quartz",
     "organic_black_dye": "Organic Black Dye",
     "melodic_alloy": "Melodic Alloy",
+    "enhanced_dye_blend": "Enhanced Dye Blend",
+    "grains_of_piezality": "Grains of Piezality",
     "diamond": "Diamond",
-    "emerald": "Emerald"
+    "emerald": "Emerald",
+    "bronze_dust": "Bronze Dust",
+    "redstone": "Redstone Dust",
+    "machine_frame_tesla_core": "Machine Frame (tesla core)",
+    "electrical_steel": "Electrical Steel",
+    "organic_green_dye": "Organic Green Dye",
+    "lapis_lazuli": "Lapis Lazuli",
+    "diamatine": "Diamatine"
 }
 
 function getLang(id){
@@ -120,31 +129,74 @@ let recipes = {
         new Item("industrial_machine_chassis"),
         new Item("end_steel", 5.5)
     ],
-    "pulsating_crystal": [
-        new Item("pulsating_iron", 8),
-        new Item("diamond")
-    ],
-    "enhanced_dye_blend": [
-        new Item("pulsating_crystal", 2),
-        new Item("nether_quartz", 2),
-        new Item("organic_black_dye", 0.5)
-    ],
     "enhanced_machine_chassis": [
         new Item("end_steel_machine_chassis"),
         new Item("enhanced_dye_blend", 4),
         new Item("melodic_alloy", 4)
+    ],
+    "machine_frame_tesla_core": [
+        new Item("enhanced_machine_chassis", 0.5),
+        new Item("electrical_steel", 4),
+        new Item("stone", 4),
+        new Item("steel", 9)
     ]
 }
 
+let itemParts = {
+    "industrial_dye_blend": [
+        new Item("organic_black_dye"),
+        new Item("organic_green_dye", 2),
+        new Item("lapis_lazuli", 2),
+        new Item("nether_quartz", 4)
+    ],
+    "soul_attuned_dye_blend": [
+        new Item("organic_brown_dye", 4),
+        new Item("nether_quartz", 4),
+        new Item("organic_black_dye")
+    ],
+    "enhanced_dye_blend": [
+        new Item("pulsating_iron", 32),
+        new Item("diamatine", 0.25),
+        new Item("nether_quartz", 4),
+        new Item("organic_black_dye")
+    ],
+    "rf_powder": [
+        new Item("bronze_dust"),
+        new Item("gp_powder"),
+        new Item("redstone")
+    ]
+}
+
+function getItemDescription(id, count){
+    let desc = "";
+    for(let i = 0; i < itemParts[id].length; i++){
+        desc += itemParts[id][i].amount * count + "x " + getLang(itemParts[id][i].name) + "<br/> ";
+    }
+
+    return desc;
+}
+
 function makeIngredient(itemName, itemCount){
-    itemName = getLang(itemName)
+    let itemNameLang = getLang(itemName);
 
     let holder = document.createElement("li");
     holder.className = "list-group-item d-flex lh-sm";
 
+    let spacer = document.createElement("span");
+    spacer.innerHTML = "&nbsp;&nbsp;&nbsp;";
+
     let name = document.createElement("h6");
-    name.className = "my-0 pe-5 me-auto";
-    name.innerHTML = "&nbsp;&nbsp;&nbsp;" + itemName;
+    name.className = "my-0 me-auto";
+
+    if(itemParts[itemName]){
+        name.setAttribute("data-bs-toggle", "tooltip");
+        name.setAttribute("data-bs-placement", "bottom");
+        name.setAttribute("data-bs-html", true);
+        name.setAttribute("data-bs-title", getItemDescription(itemName, itemCount));
+        name.className += " underline";
+    }
+
+    name.innerHTML = itemNameLang;
 
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -154,9 +206,10 @@ function makeIngredient(itemName, itemCount){
     count.innerHTML = Math.round(itemCount);
 
     holder.appendChild(checkbox);
+    holder.appendChild(spacer);
     holder.appendChild(name);
     holder.appendChild(count);
-
+    
     return holder;
 }
 
@@ -165,7 +218,7 @@ function getIngredients(ingredient){
         let subIngredients = recipes[ingredient.name];
         let ingredients = new ItemList();
 
-        for(let i = 0; i < subIngredients.length; i++){
+        for(let i = 0; i < subIngredients.length; i++){ 
             ingredients.extend(getIngredients(subIngredients[i]));
         }
         
@@ -173,7 +226,7 @@ function getIngredients(ingredient){
     }
 
     else {
-        let items = new ItemList;
+        let items = new ItemList();
         items.addItem(ingredient);
         
         return items;
@@ -184,19 +237,19 @@ let casingsType = "steel_casing";
 let casingsCount = 1;
 const ingredientsList = document.getElementById("ingredients");
 const currentRecipe = document.getElementById("recipe.type");
-const currentRecipeCount = document.getElementById("recipe.count")
+const currentRecipeCount = document.getElementById("recipe.count");
 
 function dropdown(){
     casingsType = currentRecipe.value;
     casingsCount = currentRecipeCount.value;
 
-    ingredientsList.innerHTML = ""
+    ingredientsList.innerHTML = "";
 
     generateRecipes();
 }
 
 function main(){
-    generateRecipes()
+    generateRecipes();
 }
 
 function generateRecipes(){
@@ -210,5 +263,7 @@ function generateRecipes(){
         let newIngredient = makeIngredient(key, value);
         ingredientsList.appendChild(newIngredient);
     }
-
+    
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
